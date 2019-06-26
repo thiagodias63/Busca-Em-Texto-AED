@@ -10,6 +10,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.util.Random;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -199,7 +200,13 @@ class Main extends JFrame implements ActionListener {
     }
     
     public void colorirTexto(int inicio, int tamanho) {
-        StyleConstants.setBackground(texto.getInputAttributes(), Color.YELLOW);
+        Random rand = new Random();
+        
+        int r = rand.nextInt(254);
+        int g = rand.nextInt(254);
+        int b = rand.nextInt(254);
+        
+        StyleConstants.setBackground(texto.getInputAttributes(), new Color(r, g, b));
         texto.getStyledDocument().setCharacterAttributes(inicio, tamanho, texto.getInputAttributes(), false);
     }
     
