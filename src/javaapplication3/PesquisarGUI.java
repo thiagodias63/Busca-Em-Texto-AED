@@ -6,7 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import static javaapplication3.ForcaBruta.forcaBruta;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -82,12 +83,13 @@ class PesquisarGUI extends JFrame implements ActionListener {
         ArrayList<Integer> marcados = new ArrayList<Integer>();
         int posicao = -1;
         String pesquisa =  mainPublic.texto.getText();
-        
-        
         String texto = txtPesq.getText();
+        String novoTexto = mainPublic.texto.getText();
+        
         if (chk2.isSelected() != true) {
             pesquisa = pesquisa.toLowerCase();
             texto = texto.toLowerCase();
+            novoTexto = novoTexto.toLowerCase();
         }
         
         if (this.metodo == 1) { 
@@ -114,13 +116,6 @@ class PesquisarGUI extends JFrame implements ActionListener {
             while (posicao > -1) {
                 pesquisa = pesquisa.substring(posicao + 1);
                 posicao = BoyerMoore.BMSearch(texto, pesquisa);
-                /* int espaco = 0;
-                for (int i = 0; i <= pesquisa.length();i++) {
-                    if(pesquisa.charAt(i) == 10 || pesquisa.charAt(i) == 13) {
-                        espaco++;
-                    }
-                     
-                } */ 
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
@@ -154,27 +149,40 @@ class PesquisarGUI extends JFrame implements ActionListener {
                 }
             }
         }
-        String novoTexto = mainPublic.texto.getText();
-        for (int m : marcados) {
-            if (chk1.isSelected() != true) {
-                mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
-            } else {
-                novoTexto = novoTexto.replace(texto, txtSubs.getText());
+        
+        
+        if (chk1.isSelected() == false) { // Se não vai substituir
+            for (int m : marcados) {
+                // if (chk1.isSelected() != true) {
+                    mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
+                // } else {
+                //     novoTexto = novoTexto.replace(texto, txtSubs.getText());
+                // }
             }
+        } else {
+            // if (chk1.isSelected() == true) {
+            if (metodo == 1 && pesquisaPossuiCoringa(texto)) {
+                // for (int n = marcados.size(); n > -1; n--) {
+                    texto = texto.substring(0, texto.length() - 1);
+                    System.out.println(texto);
+                    novoTexto = novoTexto.replaceAll(texto + "\\S", txtSubs.getText());
+                    // novoTexto = substituirWildCard( txtSubs.getText())
+                // }
+                mainPublic.texto.setText(novoTexto);
+            } else {
+                // for (int m : marcados) {
+                novoTexto = novoTexto.replace(texto, txtSubs.getText());
+                // }
+                mainPublic.texto.setText(novoTexto);                
+            }
+            // }
+        
         }
         
-        if (chk1.isSelected() == true) {
-            mainPublic.texto.setText(novoTexto);
-        }
         mainPublic.zerarBackground();
     }
     
     private int buscaEspacos(int posicao) { // String texto = ""
-        
-        // Possiveis soluções para caso tenha quebra de texto; Pois hoje ele pula um caracter a mais.
-        // pesquisa.replace("\n", "→");
-        // pesquisa.replace("\r", "→");
-        
         int espaco = 0;
         for (int i = posicao; i > 0; i--) {
             if(mainPublic.texto.getText().charAt(i) == 10 || mainPublic.texto.getText().charAt(i) == 13 && espaco == 0) {
@@ -183,20 +191,30 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }
         // System.out.println(espaco); // Comentando impressão
         return espaco;
-        
-        /*
-        int encontrou = 0;
-        // System.out.println(posicao);
-        
-        /* if(mainPublic.texto.getText().charAt(i) == 10 || mainPublic.texto.getText().charAt(i) == 13 && espaco < 1) {
-            encontrou++;
-        } else {
-            encontrou = 0;
-        }
-
-        if (encontrou > 1) {
-            espaco++;
-        } */ 
-
     }
+    
+    private boolean pesquisaPossuiCoringa(String texto) {
+        for (int k = 0; k < texto.length(); k++) {
+            int k1 = texto.charAt(k);
+            if (k1 == 63) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private String substituirWildCard(String texto, String padrao) {
+        Pattern regex = Pattern.compile("\\?([^?]*)\\?");
+        Matcher matcherReg = regex.matcher(texto);
+
+        StringBuffer strBuf = new StringBuffer();
+        while (matcherReg.find()) {
+             // String something = matcherReg.group(1);
+             // System.out.println(something);
+             matcherReg.appendReplacement(strBuf, padrao);
+
+        }
+        matcherReg.appendTail(strBuf);
+        return strBuf.toString(); // String replaced
+    } 
 }
