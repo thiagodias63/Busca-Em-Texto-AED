@@ -163,23 +163,31 @@ class Main extends JFrame implements ActionListener {
         }
         // Força Bruta
         else if(e.getSource() == mProcurarFb) {
-            descolorirTexto();
-            new PesquisarGUI(this, 1);
+            if (verificarTamanhoTexto()) {
+                descolorirTexto();
+                new PesquisarGUI(this, 1);
+            }
         }
         // BoyerMoore
         else if(e.getSource() == mProcurarBm) {
-            descolorirTexto();
-            new PesquisarGUI(this, 2);
+            if (verificarTamanhoTexto()) {
+                descolorirTexto();
+                new PesquisarGUI(this, 2);
+            }
         }
         // KMP
         else if(e.getSource() == mProcurarKm) {
-            descolorirTexto();
-            new PesquisarGUI(this, 3);
+            if (verificarTamanhoTexto()) {
+                descolorirTexto();
+                new PesquisarGUI(this, 3);
+            }
         }
         // Rabin Karp
         else if(e.getSource() == mProcurarRk) {
-            descolorirTexto();
-            new PesquisarGUI(this, 4);
+            if (verificarTamanhoTexto()) {
+                descolorirTexto();
+               new PesquisarGUI(this, 4);
+            }
         }
         else if(e.getSource() == mSobre) {
             new Sobre();
@@ -202,5 +210,13 @@ class Main extends JFrame implements ActionListener {
     
     public void zerarBackground() {
         StyleConstants.setBackground(texto.getInputAttributes(), Color.WHITE);
+    }
+    public boolean verificarTamanhoTexto() {
+        if (texto.getText().length() == 0) {
+          JOptionPane.showMessageDialog(null, "Não há texto no painel para ser pesquisado.");  
+            return false;
+        } else {
+             return true;
+        }
     }
 }
