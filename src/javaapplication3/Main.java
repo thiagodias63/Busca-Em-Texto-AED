@@ -1,5 +1,6 @@
 package javaapplication3;
 
+import com.sun.java.swing.plaf.motif.MotifMenuUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,11 @@ class Main extends JFrame implements ActionListener {
     JMenuItem mProcurarKm = new JMenuItem("KMP", KeyEvent.VK_K);
     JMenuItem mProcurarRk = new JMenuItem("Rabin Karp", KeyEvent.VK_R);
     
+    JMenu mPesquisar = new JMenu("Pesquisar");
+    
+    JMenu mAjuda = new JMenu("Ajuda");
+    JMenuItem mSobre = new JMenuItem("Sobre", KeyEvent.VK_H);
+    
     public Main() {
         super("Trabalho Prático - Busca em Texto 2019.1");
 
@@ -53,25 +59,36 @@ class Main extends JFrame implements ActionListener {
         // Força Bruta
         mProcurarFb.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
         mProcurarFb.addActionListener(this);
-        mArquivo.add(mProcurarFb);		
+        mPesquisar.add(mProcurarFb);		
         // BoyerMoore
         mProcurarBm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
         mProcurarBm.addActionListener(this);
-        mArquivo.add(mProcurarBm);
+        mPesquisar.add(mProcurarBm);
         // KMP
         mProcurarKm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
         mProcurarKm.addActionListener(this);
-        mArquivo.add(mProcurarKm);
+        mPesquisar.add(mProcurarKm);
         // RabinKarp
         mProcurarRk.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         mProcurarRk.addActionListener(this);
-        mArquivo.add(mProcurarRk);
+        mPesquisar.add(mProcurarRk);
+        
+        mArquivo.add(mPesquisar);
+                
+        mArquivo.addSeparator(); // separador
+        
+        mSobre.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+        mSobre.addActionListener(this);
+        
+        mAjuda.add(mSobre);
+        mArquivo.add(mAjuda);
         
         mArquivo.addSeparator(); // separador
-
+        
         mSair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
         mSair.addActionListener(this);
         mArquivo.add(mSair);
+        
 
         setJMenuBar(menuBar); // adiciona a barra de menus ao frame		
 
@@ -99,11 +116,11 @@ class Main extends JFrame implements ActionListener {
                 int returnVal = chooser.showOpenDialog(this);
 
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
-                    // Para abrir RTF, consulte a documenta��o do componente JTextPane. 
+                    // Para abrir RTF, consulte a documentação do componente JTextPane. 
                     
                     texto.setContentType("text/plain");
-                    texto.read(new BufferedReader(new FileReader(chooser.getSelectedFile().getAbsoluteFile())), "");					
-                    texto.setText(texto.getText().replaceAll("\r", "")); 
+                    texto.read(new BufferedReader(new FileReader(chooser.getSelectedFile().getAbsoluteFile())), "");
+                    // texto.setText(texto.getText().replace("\r", "")); 
                     // substitui quebra de linha padrão "Windows" (\r\n) por somente (\n) 
                 }
             }
@@ -130,6 +147,9 @@ class Main extends JFrame implements ActionListener {
         else if(e.getSource() == mProcurarRk) {
             descolorirTexto();
             new PesquisarGUI(this, 4);
+        }
+        else if(e.getSource() == mSobre) {
+            new Sobre();
         }
     }
 

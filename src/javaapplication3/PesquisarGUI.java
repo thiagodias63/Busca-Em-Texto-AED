@@ -86,7 +86,7 @@ class PesquisarGUI extends JFrame implements ActionListener {
         String texto = txtPesq.getText();
         String novoTexto = mainPublic.texto.getText();
         
-        if (chk2.isSelected() != true) {
+        if (chk2.isSelected() != true) { // Se não vai ser busca case sensitive
             pesquisa = pesquisa.toLowerCase();
             texto = texto.toLowerCase();
             novoTexto = novoTexto.toLowerCase();
@@ -153,30 +153,19 @@ class PesquisarGUI extends JFrame implements ActionListener {
         
         if (chk1.isSelected() == false) { // Se não vai substituir
             for (int m : marcados) {
-                // if (chk1.isSelected() != true) {
-                    mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
-                // } else {
-                //     novoTexto = novoTexto.replace(texto, txtSubs.getText());
-                // }
+                mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
             }
         } else {
-            // if (chk1.isSelected() == true) {
             if (metodo == 1 && pesquisaPossuiCoringa(texto)) {
-                // for (int n = marcados.size(); n > -1; n--) {
-                    texto = texto.substring(0, texto.length() - 1);
-                    System.out.println(texto);
+                texto = texto.substring(0, texto.length() - 1);
+                for (int m : marcados) {
                     novoTexto = novoTexto.replaceAll(texto + "\\S", txtSubs.getText());
-                    // novoTexto = substituirWildCard( txtSubs.getText())
-                // }
+                }
                 mainPublic.texto.setText(novoTexto);
             } else {
-                // for (int m : marcados) {
                 novoTexto = novoTexto.replace(texto, txtSubs.getText());
-                // }
                 mainPublic.texto.setText(novoTexto);                
             }
-            // }
-        
         }
         
         mainPublic.zerarBackground();
@@ -189,7 +178,6 @@ class PesquisarGUI extends JFrame implements ActionListener {
                 espaco = espaco+1;
             }
         }
-        // System.out.println(espaco); // Comentando impressão
         return espaco;
     }
     
@@ -202,19 +190,4 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }
         return false;
     }
-    
-    private String substituirWildCard(String texto, String padrao) {
-        Pattern regex = Pattern.compile("\\?([^?]*)\\?");
-        Matcher matcherReg = regex.matcher(texto);
-
-        StringBuffer strBuf = new StringBuffer();
-        while (matcherReg.find()) {
-             // String something = matcherReg.group(1);
-             // System.out.println(something);
-             matcherReg.appendReplacement(strBuf, padrao);
-
-        }
-        matcherReg.appendTail(strBuf);
-        return strBuf.toString(); // String replaced
-    } 
 }
