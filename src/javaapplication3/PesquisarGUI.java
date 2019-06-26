@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javaapplication3.Main;
+import javax.swing.JOptionPane;
 
 class PesquisarGUI extends JFrame implements ActionListener {
     int metodo;
@@ -69,77 +70,133 @@ class PesquisarGUI extends JFrame implements ActionListener {
     }
     
     private void pesquisar() {
+        if (txtPesq.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Informe o texto para pesquisa.");
+        }
+        /* else if (chk1.isSelected() == true && txtSubs.getText().length() == 0) { // pode ser nulo
+            JOptionPane.showMessageDialog(null, "Informe o texto para substituição.");
+        }  */ 
+        
+        mainPublic.descolorirTexto();
+        
+        ArrayList<Integer> marcados = new ArrayList<Integer>();
+        int posicao = -1;
+        String pesquisa =  mainPublic.texto.getText();
+        
+        
+        String texto = txtPesq.getText();
+        if (chk2.isSelected() != true) {
+            pesquisa = pesquisa.toLowerCase();
+            texto = texto.toLowerCase();
+        }
+        
         if (this.metodo == 1) { 
             // Força Bruta
-            ArrayList<Integer> marcados = new ArrayList<Integer>();
-            int posicao = -1; 
-            String pesquisa =  mainPublic.texto.getText();
-           
-            posicao = ForcaBruta.forcaBruta(txtPesq.getText(), pesquisa);
+            posicao = ForcaBruta.forcaBruta(texto, pesquisa);
             if (posicao > -1) {
                 marcados.add(posicao);
             }
             
             while (posicao > -1) {
                 pesquisa = pesquisa.substring(posicao + 1);
-                posicao = ForcaBruta.forcaBruta(txtPesq.getText(), pesquisa);
+                posicao = ForcaBruta.forcaBruta(texto, pesquisa);
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
             }
-            
-            for (int m : marcados) {
-                System.out.println(m);
-                mainPublic.colorirTexto(m, txtPesq.getText().length());
-            }
         }
         else if (this.metodo == 2) {
             // Boyer Moore
-            int posicao = BoyerMoore.BMSearch(txtPesq.getText(), mainPublic.texto.getText());
+            posicao = BoyerMoore.BMSearch(texto, pesquisa);
             if (posicao > -1) {
-                mainPublic.colorirTexto(posicao, txtPesq.getText().length());
+                marcados.add(posicao);
+            }
+            while (posicao > -1) {
+                pesquisa = pesquisa.substring(posicao + 1);
+                posicao = BoyerMoore.BMSearch(texto, pesquisa);
+                /* int espaco = 0;
+                for (int i = 0; i <= pesquisa.length();i++) {
+                    if(pesquisa.charAt(i) == 10 || pesquisa.charAt(i) == 13) {
+                        espaco++;
+                    }
+                     
+                } */ 
+                if (posicao > -1) {
+                    marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
+                }
             }
         }
         else if (this.metodo == 3) {
             // KMP 
-            int posicao = KMP.KMPSearch(txtPesq.getText(), mainPublic.texto.getText());
+            posicao = KMP.KMPSearch(texto, pesquisa);
             if (posicao > -1) {
-                mainPublic.colorirTexto(posicao, txtPesq.getText().length());
+                marcados.add(posicao);
+            }
+            while (posicao > -1) {
+                pesquisa = pesquisa.substring(posicao + 1);
+                posicao = KMP.KMPSearch(texto, pesquisa);
+                if (posicao > -1) {
+                    marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
+                }
             }
         }
         else if (this.metodo == 4) {
             // Rabin Karp
-            int posicao = RabinKarp.RKSearch(txtPesq.getText(), mainPublic.texto.getText());
+            posicao = RabinKarp.RKSearch(texto, pesquisa);
             if (posicao > -1) {
-                mainPublic.colorirTexto(posicao, txtPesq.getText().length());
+                marcados.add(posicao);
+            }
+            while (posicao > -1) {
+                pesquisa = pesquisa.substring(posicao + 1);
+                posicao = RabinKarp.RKSearch(texto, pesquisa);
+                if (posicao > -1) {
+                    marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
+                }
             }
         }
+        String novoTexto = mainPublic.texto.getText();
+        for (int m : marcados) {
+            if (chk1.isSelected() != true) {
+                mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
+            } else {
+                novoTexto = novoTexto.replace(texto, txtSubs.getText());
+            }
+        }
+        
+        if (chk1.isSelected() == true) {
+            mainPublic.texto.setText(novoTexto);
+        }
+        mainPublic.zerarBackground();
     }
     
-    /* Pode ser removido 
-    public static void main(String args[]) {
-        new PesquisarGUI();
-    } 
-    */
-    
-    /*
-    ForcaBruta fb = new ForcaBruta();
+    private int buscaEspacos(int posicao) { // String texto = ""
+        
+        // Possiveis soluções para caso tenha quebra de texto; Pois hoje ele pula um caracter a mais.
+        // pesquisa.replace("\n", "→");
+        // pesquisa.replace("\r", "→");
+        
+        int espaco = 0;
+        for (int i = posicao; i > 0; i--) {
+            if(mainPublic.texto.getText().charAt(i) == 10 || mainPublic.texto.getText().charAt(i) == 13 && espaco == 0) {
+                espaco = espaco+1;
+            }
+        }
+        // System.out.println(espaco); // Comentando impressão
+        return espaco;
+        
+        /*
+        int encontrou = 0;
+        // System.out.println(posicao);
+        
+        /* if(mainPublic.texto.getText().charAt(i) == 10 || mainPublic.texto.getText().charAt(i) == 13 && espaco < 1) {
+            encontrou++;
+        } else {
+            encontrou = 0;
+        }
 
-    System.out.print("Tamanho do texto pesquisado: ");
-    System.out.println(txtPesq.getText().length());
+        if (encontrou > 1) {
+            espaco++;
+        } */ 
 
-    System.out.print("Texto do text main: ");
-    System.out.println(mainPublic.texto.getText());
-
-    System.out.print("Texto pesquisado: ");
-    System.out.println(txtPesq.getText());
-
-    // Tamanho do texto
-    // System.out.println(txtPesq.getText().length());
-    
-    System.out.print("Posição encontrada: ");
-    System.out.println(posicao);
-            
-            
-    */
+    }
 }

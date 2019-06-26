@@ -142,8 +142,12 @@ class Main extends JFrame implements ActionListener {
         texto.getStyledDocument().setCharacterAttributes(inicio, tamanho, texto.getInputAttributes(), false);
     }
     
-    private void descolorirTexto () {
+    public void descolorirTexto () {
         StyleConstants.setBackground(texto.getInputAttributes(), Color.WHITE);
         texto.getStyledDocument().setCharacterAttributes(0, texto.getText().length(), texto.getInputAttributes(), false);
+    }
+    
+    public void zerarBackground() {
+        StyleConstants.setBackground(texto.getInputAttributes(), Color.WHITE);
     }
 }

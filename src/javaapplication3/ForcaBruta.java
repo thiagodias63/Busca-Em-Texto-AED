@@ -13,11 +13,15 @@ public class ForcaBruta {
         for (i = 0; i < n; i++) {
             aux = i;
             for (j = 0; j < m && aux < n; j++) {
+                // char t2 = t.charAt(aux);
+                
                 int t1 = t.charAt(aux);
                 int p1 = p.charAt(j);
-                if (t1 != p1) {
+                
+                if (t1 != p1 && p1 != 63) {
                     break;
                 }
+                
                 aux++;
             }
             if (j == m) {
