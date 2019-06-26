@@ -65,8 +65,6 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }		
         if(e.getSource() == btOk) {
             pesquisar();
-            // mainPublic.texto.toString();
-            // mainPublic.colorirTexto(0, 2);
         }		
     }
     
@@ -74,34 +72,30 @@ class PesquisarGUI extends JFrame implements ActionListener {
         if (txtPesq.getText().length() == 0) {
             JOptionPane.showMessageDialog(null, "Informe o texto para pesquisa.");
         }
-        /* else if (chk1.isSelected() == true && txtSubs.getText().length() == 0) { // pode ser nulo
-            JOptionPane.showMessageDialog(null, "Informe o texto para substituição.");
-        }  */ 
-        
         mainPublic.descolorirTexto();
         
         ArrayList<Integer> marcados = new ArrayList<Integer>();
         int posicao = -1;
-        String pesquisa =  mainPublic.texto.getText();
-        String texto = txtPesq.getText();
+        String texto =  mainPublic.texto.getText();
+        String palavra = txtPesq.getText();
         String novoTexto = mainPublic.texto.getText();
         
         if (chk2.isSelected() != true) { // Se não vai ser busca case sensitive
-            pesquisa = pesquisa.toLowerCase();
             texto = texto.toLowerCase();
+            palavra = palavra.toLowerCase();
             novoTexto = novoTexto.toLowerCase();
         }
         
         if (this.metodo == 1) { 
             // Força Bruta
-            posicao = ForcaBruta.forcaBruta(texto, pesquisa);
+            posicao = ForcaBruta.forcaBruta(palavra, texto);
             if (posicao > -1) {
                 marcados.add(posicao);
             }
             
             while (posicao > -1) {
-                pesquisa = pesquisa.substring(posicao + 1);
-                posicao = ForcaBruta.forcaBruta(texto, pesquisa);
+                texto = texto.substring(posicao + 1);
+                posicao = ForcaBruta.forcaBruta(palavra, texto);
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
@@ -109,13 +103,13 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }
         else if (this.metodo == 2) {
             // Boyer Moore
-            posicao = BoyerMoore.BMSearch(texto, pesquisa);
+            posicao = BoyerMoore.BMSearch(palavra, texto);
             if (posicao > -1) {
                 marcados.add(posicao);
             }
             while (posicao > -1) {
-                pesquisa = pesquisa.substring(posicao + 1);
-                posicao = BoyerMoore.BMSearch(texto, pesquisa);
+                texto = texto.substring(posicao + 1);
+                posicao = BoyerMoore.BMSearch(palavra, texto);
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
@@ -123,13 +117,13 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }
         else if (this.metodo == 3) {
             // KMP 
-            posicao = KMP.KMPSearch(texto, pesquisa);
+            posicao = KMP.KMPSearch(palavra, texto);
             if (posicao > -1) {
                 marcados.add(posicao);
             }
             while (posicao > -1) {
-                pesquisa = pesquisa.substring(posicao + 1);
-                posicao = KMP.KMPSearch(texto, pesquisa);
+                texto = texto.substring(posicao + 1);
+                posicao = KMP.KMPSearch(palavra, texto);
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
@@ -137,13 +131,13 @@ class PesquisarGUI extends JFrame implements ActionListener {
         }
         else if (this.metodo == 4) {
             // Rabin Karp
-            posicao = RabinKarp.RKSearch(texto, pesquisa);
+            posicao = RabinKarp.RKSearch(palavra, texto);
             if (posicao > -1) {
                 marcados.add(posicao);
             }
             while (posicao > -1) {
-                pesquisa = pesquisa.substring(posicao + 1);
-                posicao = RabinKarp.RKSearch(texto, pesquisa);
+                texto = texto.substring(posicao + 1);
+                posicao = RabinKarp.RKSearch(palavra, texto);
                 if (posicao > -1) {
                     marcados.add(posicao + marcados.get(marcados.size() - 1) + 1);    
                 }
@@ -154,20 +148,20 @@ class PesquisarGUI extends JFrame implements ActionListener {
         if (chk1.isSelected() == false) { // Se não vai substituir
             for (int m : marcados) {
                 if (mainPublic.rtfFile == false) { // Maior parte do tempo
-                    mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
+                    mainPublic.colorirTexto(m - buscaEspacos(m), palavra.length());
                 } else {
-                    mainPublic.colorirTexto(m, texto.length());
+                    mainPublic.colorirTexto(m, palavra.length());
                 }
             }
         } else {
-            if (metodo == 1 && pesquisaPossuiCoringa(texto)) {
-                texto = texto.substring(0, texto.length() - 1);
+            if (metodo == 1 && pesquisaPossuiCoringa(palavra)) {
+                palavra = palavra.substring(0, palavra.length() - 1);
                 for (int m : marcados) {
-                    novoTexto = novoTexto.replaceAll(texto + "\\S", txtSubs.getText());
+                    novoTexto = novoTexto.replaceAll(palavra + "\\S", txtSubs.getText());
                 }
                 mainPublic.texto.setText(novoTexto);
             } else {
-                novoTexto = novoTexto.replace(texto, txtSubs.getText());
+                novoTexto = novoTexto.replace(palavra, txtSubs.getText());
                 mainPublic.texto.setText(novoTexto);                
             }
         }

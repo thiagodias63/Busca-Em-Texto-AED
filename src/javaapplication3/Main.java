@@ -32,6 +32,7 @@ class Main extends JFrame implements ActionListener {
 
     JMenuBar menuBar = new JMenuBar();
     JMenu mArquivo = new JMenu("Arquivo"); 
+    
     JMenuItem mNovo = new JMenuItem("Novo", KeyEvent.VK_N); 
     JMenuItem mAbrir = new JMenuItem("Abrir", KeyEvent.VK_A);
     JMenuItem mSair = new JMenuItem("Sair", KeyEvent.VK_I);
@@ -59,7 +60,7 @@ class Main extends JFrame implements ActionListener {
         mNovo.addActionListener(this);
         mArquivo.add(mNovo);
 
-        mAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        mAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         mAbrir.addActionListener(this);
         mArquivo.add(mAbrir);		
         // Força Bruta
@@ -79,15 +80,14 @@ class Main extends JFrame implements ActionListener {
         mProcurarRk.addActionListener(this);
         mPesquisar.add(mProcurarRk);
         
-        mArquivo.add(mPesquisar);
+        menuBar.add(mPesquisar);
                 
-        mArquivo.addSeparator(); // separador
         
         mSobre.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
         mSobre.addActionListener(this);
         
         mAjuda.add(mSobre);
-        mArquivo.add(mAjuda);
+        menuBar.add(mAjuda);
         
         mArquivo.addSeparator(); // separador
         
