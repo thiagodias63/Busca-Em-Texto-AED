@@ -205,7 +205,10 @@ class Main extends JFrame implements ActionListener {
         int r = rand.nextInt(254);
         int g = rand.nextInt(254);
         int b = rand.nextInt(254);
-        
+        if (r == 254 && g == 254 && b == 254) {
+            r = 0;
+            b = 0;
+        }
         StyleConstants.setBackground(texto.getInputAttributes(), new Color(r, g, b));
         texto.getStyledDocument().setCharacterAttributes(inicio, tamanho, texto.getInputAttributes(), false);
     }
