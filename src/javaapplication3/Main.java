@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 
 import javax.swing.JFileChooser;
@@ -20,7 +22,9 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 import javaapplication3.PesquisarGUI;
+import javax.swing.text.Document;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.rtf.RTFEditorKit;
 
 class Main extends JFrame implements ActionListener {
     JTextPane texto; // componente que permite mudança de cores e outros atributos do texto
@@ -43,6 +47,8 @@ class Main extends JFrame implements ActionListener {
     JMenu mAjuda = new JMenu("Ajuda");
     JMenuItem mSobre = new JMenuItem("Sobre", KeyEvent.VK_H);
     
+    public boolean rtfFile = false;
+    
     public Main() {
         super("Trabalho Prático - Busca em Texto 2019.1");
 
@@ -53,7 +59,7 @@ class Main extends JFrame implements ActionListener {
         mNovo.addActionListener(this);
         mArquivo.add(mNovo);
 
-        mAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+        mAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
         mAbrir.addActionListener(this);
         mArquivo.add(mAbrir);		
         // Força Bruta
@@ -116,10 +122,37 @@ class Main extends JFrame implements ActionListener {
                 int returnVal = chooser.showOpenDialog(this);
 
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
-                    // Para abrir RTF, consulte a documentação do componente JTextPane. 
+                    String filename = chooser.getSelectedFile().getName();
+                    String ext = filename.substring(filename.lastIndexOf("."),filename.length());
                     
-                    texto.setContentType("text/plain");
-                    texto.read(new BufferedReader(new FileReader(chooser.getSelectedFile().getAbsoluteFile())), "");
+                    if (ext.contains(".txt")) {
+                        // txt
+                        texto.setContentType("text/plain");
+                        texto.read(new BufferedReader(new FileReader(chooser.getSelectedFile().getAbsoluteFile())), "");
+                        rtfFile = false;
+                        
+                    } else if (ext.contains(".rtf")) {
+                        // rtf
+                        // Para abrir RTF, consulte a documentação do componente JTextPane. 
+                        // texto.setContentType("application/rtf");
+                        texto.setContentType("text/plain");
+                        RTFEditorKit rtf = new RTFEditorKit();
+                        Document doc = rtf.createDefaultDocument();
+
+                        FileInputStream fis = new FileInputStream(chooser.getSelectedFile().getAbsoluteFile());
+                        rtf.read(fis,doc,0);
+                        texto.setText(doc.getText(0,doc.getLength()));
+                        rtfFile = true;
+                        
+                        // Exemplo professor
+                        // texto.read(new BufferedReader(new FileReader(chooser.getSelectedFile().getAbsoluteFile())), "");
+                        // texto.setText(texto.getText().replaceAll("\r", "")); 
+                    } else {
+                        // Formato não suportado
+                        JOptionPane.showMessageDialog(null, "Formato de arquivo não suportado");
+                        rtfFile = false;
+                    }
+                    
                     // texto.setText(texto.getText().replace("\r", "")); 
                     // substitui quebra de linha padrão "Windows" (\r\n) por somente (\n) 
                 }

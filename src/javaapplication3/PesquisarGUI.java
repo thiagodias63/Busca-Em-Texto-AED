@@ -153,7 +153,11 @@ class PesquisarGUI extends JFrame implements ActionListener {
         
         if (chk1.isSelected() == false) { // Se não vai substituir
             for (int m : marcados) {
-                mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
+                if (mainPublic.rtfFile == false) { // Maior parte do tempo
+                    mainPublic.colorirTexto(m - buscaEspacos(m), texto.length());
+                } else {
+                    mainPublic.colorirTexto(m, texto.length());
+                }
             }
         } else {
             if (metodo == 1 && pesquisaPossuiCoringa(texto)) {
